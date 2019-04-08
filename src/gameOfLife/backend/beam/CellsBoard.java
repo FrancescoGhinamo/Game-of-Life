@@ -1,22 +1,20 @@
 package gameOfLife.backend.beam;
 
-import java.util.Observable;
-import java.util.Observer;
 
-@SuppressWarnings("deprecation")
-public class CellsBoard extends Observable implements Observer {
+public class CellsBoard extends Thread {
 	
 	private static CellsBoard me;
 	
-	private static final int GRID_HEIGHT = 100;
-	private static final int GRID_WIDTH = 100;
+	private static final int GRID_HEIGHT = 3;
+	private static final int GRID_WIDTH = 3;
 
-	private Cell[][] board;
+	private volatile Cell[][] board;
+	
+	private boolean stopped;
 	
 	private CellsBoard() {
 		board = new Cell[GRID_WIDTH][GRID_HEIGHT];
 		initBoard();
-		startCells();
 	}
 
 	public static CellsBoard getInstance() {
@@ -26,33 +24,36 @@ public class CellsBoard extends Observable implements Observer {
 		return me;
 	}
 	
-	private void startCells() {
-		for(Cell[] cs: board) {
-			for(Cell c: cs) {
-				new Thread(c).start();
+	public void run() {
+		this.stopped = false;
+		while(!stopped) {
+			for(Cell[] cs: board) {
+				for(Cell c: cs) {
+					c.checkLife();
+				}
+			}
+			
+			for(Cell[] cs: board) {
+				for(Cell c: cs) {
+					c.applyChanges();
+				}
 			}
 		}
+		
 		
 	}
 
 	private void initBoard() {
 		for(int x = 0; x < GRID_WIDTH; x++) {
 			for(int y = 0; y < GRID_HEIGHT; y++) {
-				board[x][y] = new Cell(this, x, y);
-				board[x][y].addObserver(this);
+				board[x][y] = new Cell(x, y);
 			}
 		}
 		
 	}
 
-	
-	@Override
-	public void update(Observable o, Object arg) {
-		if(o instanceof Cell) {
-			setChanged();
-			notifyObservers(arg);
-		}
-		
+	public void pause() {
+		this.stopped = true;
 	}
 	
 	
@@ -60,6 +61,15 @@ public class CellsBoard extends Observable implements Observer {
 		return board;
 	}
 
+	public static int getGridHeight() {
+		return GRID_HEIGHT;
+	}
+
+	public static int getGridWidth() {
+		return GRID_WIDTH;
+	}
+
+	
 	
 	
 	

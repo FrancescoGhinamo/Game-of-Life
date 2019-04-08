@@ -3,41 +3,31 @@ package gameOfLife.backend.beam;
 import java.util.Observable;
 
 @SuppressWarnings("deprecation")
-public class Cell extends Observable implements Runnable {
+public class Cell extends Observable {
 
 	private int x, y;
 	private boolean alive;
-	private CellsBoard owner;
+	private boolean thenAlive;
 
-	public Cell(CellsBoard owner, int x, int y) {
+	public Cell(int x, int y) {
 		super();
-		this.owner = owner;
 		this.x = x;
 		this.y = y;
 		this.alive = false;
+		this.thenAlive = false;
 	}
 
-	public Cell(CellsBoard owner, int x, int y, boolean alive) {
+	public Cell(int x, int y, boolean alive) {
 		super();
-		this.owner = owner;
 		this.x = x;
 		this.y = y;
 		this.alive = alive;
-	}
-	
-	
-	@Override
-	public void run() {
-		while(true) {
-			checkLife();
-		}
-		
 	}
 
 	public void checkLife() {
 		int neighboringAlive = 0;
 		
-		Cell[][] _board = owner.getBoard();
+		Cell[][] _board = CellsBoard.getInstance().getBoard();
 		try {
 			if(_board[x - 1][y - 1].isAlive()) {
 				neighboringAlive++;
@@ -105,14 +95,18 @@ public class Cell extends Observable implements Runnable {
 		
 		
 		if(neighboringAlive == 3) {
-			this.setAlive(true);
+			this.thenAlive = true;
 		}
 		else if(neighboringAlive == 2) {
 			
 		}
 		else {
-			this.setAlive(false);
+			this.thenAlive = false;
 		}
+	}
+	
+	public void applyChanges() {
+		this.setAlive(this.thenAlive);
 	}
 	
 	public boolean isAlive() {

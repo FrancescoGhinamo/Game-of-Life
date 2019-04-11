@@ -43,6 +43,21 @@ public class CellsBoard extends Thread {
 		
 	}
 
+	public void displaySituation() {
+		for(int x = 0; x < GRID_WIDTH; x++) {
+			for(int y = 0; y < GRID_HEIGHT; y++) {
+				if(board[x][y].isAlive()) {
+					System.out.print("A ");
+				}
+				else {
+					System.out.print("D ");
+				}
+			}
+			System.out.println("");
+		}
+		System.out.println("");
+	}
+	
 	private void initBoard() {
 		for(int x = 0; x < GRID_WIDTH; x++) {
 			for(int y = 0; y < GRID_HEIGHT; y++) {

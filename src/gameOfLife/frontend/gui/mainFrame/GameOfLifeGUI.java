@@ -37,7 +37,7 @@ public class GameOfLifeGUI extends JFrame {
 			}
 		}
 		
-//		CellsBoard.getInstance().start();
+		CellsBoard.getInstance().start();
 		
 	}
 

@@ -115,6 +115,7 @@ public class Cell extends Observable {
 
 	public void setAlive(boolean alive) {
 		if(this.alive != alive) {
+			CellsBoard.getInstance().displaySituation();
 			setChanged();
 			notifyObservers(this);
 		}
